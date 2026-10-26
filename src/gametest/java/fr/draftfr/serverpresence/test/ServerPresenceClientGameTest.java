@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import com.google.gson.JsonObject;
 import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -89,8 +90,12 @@ public class ServerPresenceClientGameTest implements FabricClientGameTest {
 		waitForActivity(context, "play.platomine.fr");
 		context.runOnClient(minecraft -> ServerPresenceClient.pauseTicks(false));
 
-		// settings screens
-		context.setScreen(() -> new SettingsScreen(new TitleScreen()));
+		// settings screens, from the options of the title screen
+		context.setScreen(() -> new OptionsScreen(new TitleScreen(), context.computeOnClient(minecraft -> minecraft.options)));
+		context.waitForScreen(OptionsScreen.class);
+		context.waitTicks(5);
+		context.takeScreenshot("serverpresence-0-options");
+		context.clickScreenButton("serverpresence.options.button");
 		context.waitForScreen(SettingsScreen.class);
 		context.waitTicks(5);
 		context.takeScreenshot("serverpresence-1-settings");
@@ -101,6 +106,8 @@ public class ServerPresenceClientGameTest implements FabricClientGameTest {
 		context.takeScreenshot("serverpresence-2-edit");
 		context.clickScreenButton("gui.done");
 		context.waitForScreen(SettingsScreen.class);
+		context.clickScreenButton("gui.done");
+		context.waitForScreen(OptionsScreen.class);
 		context.clickScreenButton("gui.done");
 		context.waitForScreen(TitleScreen.class);
 

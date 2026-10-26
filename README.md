@@ -16,7 +16,7 @@ Prérequis : Fabric Loader 0.19.5+, Fabric API, Java 25, l'application Discord d
 
 ## Réglages
 
-Touche **F7** (modifiable dans Options → Commandes) ou commande **/presence** :
+Bouton **Options → Présence Discord…** (aussi depuis le menu principal, sans être connecté), touche **F7** (modifiable dans Options → Commandes) ou commande **/presence** :
 
 - activer/désactiver chaque serveur, en ajouter, en supprimer ;
 - par serveur : nom « Joue à », lignes 1 et 2, logo (vide = logo du serveur récupéré automatiquement), bouton, chrono, adresses reconnues (`*.domaine.fr` = tous les sous-domaines) ;

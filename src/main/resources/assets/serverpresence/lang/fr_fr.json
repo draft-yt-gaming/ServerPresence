@@ -13,6 +13,7 @@
 	"serverpresence.status.vanish.detected": "Vanish : détecté, serveur masqué sur Discord.",
 	"serverpresence.status.vanish.delay": "Vanish : vérification en cours après la connexion, serveur pas encore affiché.",
 	"serverpresence.status.vanish.none": "Vanish : non détecté.",
+	"serverpresence.options.button": "Présence Discord…",
 	"serverpresence.settings.title": "Présence Discord",
 	"serverpresence.settings.general": "Général",
 	"serverpresence.settings.enabled": "Présence Discord",

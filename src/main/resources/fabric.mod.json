@@ -3,7 +3,7 @@
 	"id": "serverpresence",
 	"version": "${version}",
 	"name": "Server Presence",
-	"description": "Affiche le serveur Minecraft (logo, nom, IP) dans la présence Discord, se masque quand tu es en vanish. Réglages : touche F7 ou /presence.",
+	"description": "Affiche le serveur Minecraft (logo, nom, IP) dans la présence Discord, se masque quand tu es en vanish. Réglages : Options → Présence Discord, touche F7 ou /presence.",
 	"authors": [
 		"Draft_fr"
 	],
