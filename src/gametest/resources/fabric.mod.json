@@ -1,0 +1,12 @@
+{
+	"schemaVersion": 1,
+	"id": "serverpresence-test",
+	"version": "1.0.0",
+	"name": "Server Presence tests",
+	"environment": "*",
+	"entrypoints": {
+		"fabric-client-gametest": [
+			"fr.draftfr.serverpresence.test.ServerPresenceClientGameTest"
+		]
+	}
+}

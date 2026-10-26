@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "fr.draftfr.serverpresence.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"BossHealthOverlayAccessor",
+		"PlayerTabOverlayAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
