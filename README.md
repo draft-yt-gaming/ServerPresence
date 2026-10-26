@@ -45,7 +45,7 @@ En secours, le **mode discret** masque le serveur actuel jusqu'à la déconnexio
 
 ## Application Discord
 
-Le mod passe par l'application Discord « PlatoMINE ». Son identifiant est écrit uniquement dans le code (`PresenceManager.DISCORD_APPLICATION_ID`) et ne se règle pas en jeu ; le nom affiché (« Joue à … ») est de toute façon remplacé par celui du serveur.
+Le mod passe par sa propre application Discord, « Minecraft », dont l'icône est le logo du mod (Discord l'affiche dans les salons vocaux). Son identifiant est écrit uniquement dans le code (`PresenceManager.DISCORD_APPLICATION_ID`) et ne se règle pas en jeu ; le nom affiché (« Joue à … ») est de toute façon remplacé par celui du serveur.
 
 ## Compiler
 

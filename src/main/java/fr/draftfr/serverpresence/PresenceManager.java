@@ -38,10 +38,10 @@ public final class PresenceManager {
 	}
 
 	/**
-	 * Discord application of the mod (the "PlatoMINE" application of the PlatoMine Discord bot). Written here only, on
-	 * purpose not in the settings: the "Playing ..." line shows the name of the server anyway.
+	 * Discord application of the mod, named "Minecraft" with the logo of the mod: Discord shows its icon in voice
+	 * channels and member lists. Written here only, on purpose not in the settings.
 	 */
-	private static final String DISCORD_APPLICATION_ID = "1079130893911859384";
+	private static final String DISCORD_APPLICATION_ID = "1536600224980795412";
 
 	private final DiscordRpc rpc = new DiscordRpc(DISCORD_APPLICATION_ID);
 	private final VanishDetector vanish = new VanishDetector();
