@@ -1,5 +1,7 @@
 # Server Presence
 
+<img src="logo/logo-400.png" width="128" alt="Logo">
+
 Mod Fabric (client) pour Minecraft 26.3 qui affiche le serveur sur lequel tu joues dans ta présence Discord : nom (« Joue à PlatoMINE »), IP, logo du serveur, tête de ton skin, chrono et un bouton vers le site. Il se masque tout seul quand tu es en vanish.
 
 Prérequis : Fabric Loader 0.19.5+, Fabric API, Java 25, l'application Discord de bureau ouverte.
@@ -52,3 +54,5 @@ Le mod passe par l'application Discord « PlatoMINE ». Son identifiant est écr
 ```
 
 Gradle a besoin de Java 25. `./gradlew runClientGameTest` lance un vrai client et vérifie les écrans, la détection du vanish et l'envoi de la présence au Discord ouvert sur la machine.
+
+Le logo (`logo/`, 400×400 pour CurseForge) est dessiné par `logo/logo.py` : `python logo/logo.py logo`.
