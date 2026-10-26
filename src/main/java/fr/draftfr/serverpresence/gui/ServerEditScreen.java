@@ -61,11 +61,6 @@ public class ServerEditScreen extends OptionsSubScreen {
 		this.field("serverpresence.edit.image_text", s.largeText, 128, value -> s.largeText = value);
 		this.field("serverpresence.edit.button_label", s.buttonLabel, 32, value -> s.buttonLabel = value);
 		this.field("serverpresence.edit.button_url", s.buttonUrl, 512, value -> s.buttonUrl = value.strip());
-		EditBox clientId = this.field("serverpresence.edit.client_id", s.clientId, 32, null);
-		clientId.setResponder(value -> {
-			s.clientId = value.strip();
-			clientId.setTextColor(SettingsScreen.isClientId(s.clientId) ? TEXT : SettingsScreen.RED);
-		});
 
 		this.list.addHeader(Component.translatable("serverpresence.edit.vanish"));
 		EditBox delay = this.box(Integer.toString(s.revealDelaySeconds), 3, null);

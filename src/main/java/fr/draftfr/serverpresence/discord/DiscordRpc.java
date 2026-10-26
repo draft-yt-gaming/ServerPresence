@@ -21,7 +21,7 @@ public final class DiscordRpc {
 	private static final long RETRY_MS = 15_000;
 
 	public enum Status {
-		NO_CLIENT_ID,
+		IDLE,
 		CONNECTING,
 		CONNECTED,
 		DISCORD_NOT_FOUND,
@@ -30,43 +30,39 @@ public final class DiscordRpc {
 	}
 
 	private final Object lock = new Object();
-	private String wantedClientId = "";
+	private final String clientId;
 	private @Nullable JsonObject wantedActivity;
 	private boolean changed;
-	private volatile Status status = Status.NO_CLIENT_ID;
+	private volatile Status status = Status.IDLE;
 	private volatile String discordUser = "";
 	private volatile String lastError = "";
 	private volatile @Nullable DiscordIpc ipc;
-	private String connectedClientId = "";
 	private volatile @Nullable String sentActivity;
 	private long lastSend;
 	private long nextConnectAttempt;
 	private boolean running = true;
 
-	public DiscordRpc() {
+	/** {@code clientId}: the Discord application of the mod, written in the code only. */
+	public DiscordRpc(String clientId) {
+		this.clientId = clientId;
 		Thread thread = new Thread(this::run, "ServerPresence Discord RPC");
 		thread.setDaemon(true);
 		thread.start();
 	}
 
 	/** Called from the game thread; {@code activity == null} clears the presence. */
-	public void update(String clientId, @Nullable JsonObject activity) {
+	public void update(@Nullable JsonObject activity) {
 		synchronized (this.lock) {
-			String id = clientId == null ? "" : clientId.trim();
-			if (id.equals(this.wantedClientId) && Objects.equals(activity, this.wantedActivity)) {
+			if (Objects.equals(activity, this.wantedActivity)) {
 				return;
 			}
-			this.wantedClientId = id;
 			this.wantedActivity = activity == null ? null : activity.deepCopy();
 			this.changed = true;
-			if (!id.equals(this.connectedClientId)) {
-				this.nextConnectAttempt = 0;
-			}
 			this.lock.notifyAll();
 		}
 	}
 
-	/** Retries right now (after the application id was changed in the settings). */
+	/** Retries right now (after the settings were changed). */
 	public void retry() {
 		synchronized (this.lock) {
 			this.nextConnectAttempt = 0;
@@ -105,7 +101,6 @@ public final class DiscordRpc {
 
 	private void run() {
 		while (true) {
-			String clientId;
 			JsonObject activity;
 			synchronized (this.lock) {
 				while (this.running && !this.dueLocked()) {
@@ -118,12 +113,11 @@ public final class DiscordRpc {
 				if (!this.running) {
 					return;
 				}
-				clientId = this.wantedClientId;
 				activity = this.wantedActivity;
 				this.changed = false;
 			}
 			try {
-				this.sync(clientId, activity);
+				this.sync(activity);
 			} catch (RuntimeException e) {
 				ServerPresenceClient.LOGGER.error("Discord presence update failed", e);
 				this.disconnect(Status.ERROR);
@@ -139,7 +133,7 @@ public final class DiscordRpc {
 		if (this.ipc != null && this.sentActivity != null) {
 			return now - this.lastSend >= REFRESH_MS;
 		}
-		return this.ipc == null && this.wantedActivity != null && !this.wantedClientId.isEmpty() && now >= this.nextConnectAttempt;
+		return this.ipc == null && this.wantedActivity != null && now >= this.nextConnectAttempt;
 	}
 
 	private long waitTimeLocked() {
@@ -154,32 +148,24 @@ public final class DiscordRpc {
 		return wait;
 	}
 
-	private void sync(String clientId, @Nullable JsonObject activity) {
-		if (clientId.isEmpty()) {
-			this.disconnect(Status.NO_CLIENT_ID);
-			return;
-		}
-		if (this.ipc != null && !clientId.equals(this.connectedClientId)) {
-			this.disconnect(Status.CONNECTING);
-		}
+	private void sync(@Nullable JsonObject activity) {
 		if (this.ipc == null) {
 			if (activity == null) {
 				// nothing to show: no need to talk to Discord, closing the connection already cleared it
 				return;
 			}
-			if (!this.connect(clientId)) {
+			if (!this.connect()) {
 				return;
 			}
 		}
 		this.send(activity);
 	}
 
-	private boolean connect(String clientId) {
+	private boolean connect() {
 		this.status = Status.CONNECTING;
 		try {
-			DiscordIpc connection = DiscordIpc.connect(clientId);
+			DiscordIpc connection = DiscordIpc.connect(this.clientId);
 			this.ipc = connection;
-			this.connectedClientId = clientId;
 			this.sentActivity = null;
 			this.discordUser = readUser(connection.ready());
 			this.status = Status.CONNECTED;
@@ -245,7 +231,6 @@ public final class DiscordRpc {
 	private void disconnect(Status status) {
 		DiscordIpc connection = this.ipc;
 		this.ipc = null;
-		this.connectedClientId = "";
 		this.sentActivity = null;
 		if (connection != null) {
 			connection.close();

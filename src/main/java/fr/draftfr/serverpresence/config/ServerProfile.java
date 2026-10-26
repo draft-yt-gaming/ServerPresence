@@ -22,8 +22,6 @@ public class ServerProfile {
 	public boolean showTimer = true;
 	public String buttonLabel = "";
 	public String buttonUrl = "";
-	/** Optional Discord application id used only for this server (its name replaces the global one). */
-	public String clientId = "";
 
 	/** Vanish detection: the presence is hidden (or generic) while vanished. */
 	public boolean vanishDetection = false;
@@ -59,7 +57,6 @@ public class ServerProfile {
 		copy.showTimer = this.showTimer;
 		copy.buttonLabel = this.buttonLabel;
 		copy.buttonUrl = this.buttonUrl;
-		copy.clientId = this.clientId;
 		copy.vanishDetection = this.vanishDetection;
 		copy.vanishOn = this.vanishOn;
 		copy.vanishOff = this.vanishOff;
@@ -80,7 +77,6 @@ public class ServerProfile {
 		this.largeText = orEmpty(this.largeText);
 		this.buttonLabel = orEmpty(this.buttonLabel);
 		this.buttonUrl = orEmpty(this.buttonUrl);
-		this.clientId = orEmpty(this.clientId);
 		this.vanishOn = orEmpty(this.vanishOn);
 		this.vanishOff = orEmpty(this.vanishOff);
 		this.vanishIndicator = orEmpty(this.vanishIndicator);

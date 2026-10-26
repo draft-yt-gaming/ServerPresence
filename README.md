@@ -14,6 +14,10 @@ Prérequis : Fabric Loader 0.19.5+, Fabric API, Java 25, l'application Discord d
 | SkillioGames | play.skilliogames.fr | non |
 | LuckatTech Survie | luckattech.playit.game | non |
 
+Tout autre serveur rejoint pour la première fois est **ajouté automatiquement** à la liste, avec son nom de la liste Multijoueur et son logo (sauf mondes LAN, Realms et adresses locales) ; il suffit ensuite de le modifier ou de le désactiver si besoin. L'option « Ajout automatique » coupe ce comportement.
+
+Dans **Multijoueur**, chaque serveur a un petit logo Discord en bas à droite (sous l'icône de ping) : bleu = affiché sur Discord, gris = non affiché ; un clic l'active ou le désactive.
+
 ## Réglages
 
 Bouton **Options → Présence Discord…** (aussi depuis le menu principal, sans être connecté), touche **F7** (modifiable dans Options → Commandes) ou commande **/presence** :
@@ -39,7 +43,7 @@ En secours, le **mode discret** masque le serveur actuel jusqu'à la déconnexio
 
 ## Application Discord
 
-Par défaut, le mod utilise l'application Discord « PlatoMINE » ; le nom affiché (« Joue à … ») est remplacé par celui du serveur, donc n'importe quelle application convient. Pour utiliser la tienne : crée-la sur https://discord.com/developers/applications et colle son *Application ID* dans les réglages.
+Le mod passe par l'application Discord « PlatoMINE ». Son identifiant est écrit uniquement dans le code (`PresenceManager.DISCORD_APPLICATION_ID`) et ne se règle pas en jeu ; le nom affiché (« Joue à … ») est de toute façon remplacé par celui du serveur.
 
 ## Compiler
 

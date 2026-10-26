@@ -17,7 +17,6 @@ import net.fabricmc.loader.api.FabricLoader;
 
 /** Settings of the mod, stored in {@code config/serverpresence.json}. */
 public class PresenceConfig {
-	public static final String DEFAULT_CLIENT_ID = "1079130893911859384";
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 	private static PresenceConfig instance = new PresenceConfig();
 
@@ -30,13 +29,10 @@ public class PresenceConfig {
 	}
 
 	public boolean enabled = true;
-	/**
-	 * Discord application id. Any application works: the "Playing ..." line is replaced by the name of the server.
-	 * Default: the "PlatoMINE" application of the PlatoMine Discord bot.
-	 */
-	public String clientId = DEFAULT_CLIENT_ID;
 	public boolean showInMenus = true;
 	public boolean showSingleplayer = true;
+	/** A server joined for the first time is added to the list (shown with its name of the multiplayer list). */
+	public boolean autoAdd = true;
 	/** Servers that are not in the list, or disabled. */
 	public Visibility otherServers = Visibility.GENERIC;
 	/** While vanished on a server with vanish detection. */
@@ -99,9 +95,6 @@ public class PresenceConfig {
 	}
 
 	private PresenceConfig sanitize() {
-		if (this.clientId == null) {
-			this.clientId = "";
-		}
 		if (this.menuImage == null) {
 			this.menuImage = "";
 		}

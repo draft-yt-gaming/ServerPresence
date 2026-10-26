@@ -56,15 +56,9 @@ public class SettingsScreen extends OptionsSubScreen {
 				}
 			});
 		this.list.addSmall(toggle("serverpresence.settings.head", config.showPlayerHead, value -> config.showPlayerHead = value), discreet);
+		this.list.addSmall(toggle("serverpresence.settings.auto_add", config.autoAdd, value -> config.autoAdd = value), null);
 
 		this.list.addHeader(Component.translatable("serverpresence.settings.discord"));
-		EditBox clientId = this.box(config.clientId, 32, "serverpresence.settings.client_id.hint", null);
-		clientId.setTooltip(Tooltip.create(Component.translatable("serverpresence.settings.client_id.tooltip")));
-		clientId.setResponder(value -> {
-			config.clientId = value.strip();
-			clientId.setTextColor(isClientId(config.clientId) ? 0xFFE0E0E0 : RED);
-		});
-		this.list.addSmall(label("serverpresence.settings.client_id"), clientId);
 		this.status = new StringWidget(310, 20, discordStatus(), this.font);
 		this.list.addBig(this.status);
 
@@ -135,25 +129,18 @@ public class SettingsScreen extends OptionsSubScreen {
 		}
 		DiscordRpc rpc = ServerPresenceClient.manager().rpc();
 		DiscordRpc.Status status = rpc.status();
-		if (config.clientId.isBlank() && status != DiscordRpc.Status.CONNECTED) {
-			return Component.translatable("serverpresence.discord.no_client_id").withColor(0xFFFFD866);
-		}
 		Component text = switch (status) {
 			case CONNECTED -> Component.translatable("serverpresence.discord.connected", rpc.discordUser()).withColor(0xFF66DD66);
 			case CONNECTING -> Component.translatable("serverpresence.discord.connecting").withColor(GRAY);
 			case DISCORD_NOT_FOUND -> Component.translatable("serverpresence.discord.not_found").withColor(0xFFFFD866);
 			case INVALID_CLIENT_ID -> Component.translatable("serverpresence.discord.invalid_client_id").withColor(RED);
-			case NO_CLIENT_ID -> Component.translatable("serverpresence.discord.idle").withColor(GRAY);
+			case IDLE -> Component.translatable("serverpresence.discord.idle").withColor(GRAY);
 			case ERROR -> Component.translatable("serverpresence.discord.error", rpc.lastError()).withColor(RED);
 		};
 		if (status == DiscordRpc.Status.CONNECTED && !rpc.lastError().isEmpty()) {
 			return Component.translatable("serverpresence.discord.refused", rpc.lastError()).withColor(RED);
 		}
 		return text;
-	}
-
-	static boolean isClientId(String id) {
-		return id.isEmpty() || id.matches("\\d{15,25}");
 	}
 
 	static CycleButton<Boolean> toggle(String key, boolean value, Consumer<Boolean> setter) {

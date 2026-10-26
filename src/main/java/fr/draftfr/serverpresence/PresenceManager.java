@@ -17,6 +17,7 @@ import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
@@ -36,7 +37,13 @@ public final class PresenceManager {
 		OTHER_SERVER
 	}
 
-	private final DiscordRpc rpc = new DiscordRpc();
+	/**
+	 * Discord application of the mod (the "PlatoMINE" application of the PlatoMine Discord bot). Written here only, on
+	 * purpose not in the settings: the "Playing ..." line shows the name of the server anyway.
+	 */
+	private static final String DISCORD_APPLICATION_ID = "1079130893911859384";
+
+	private final DiscordRpc rpc = new DiscordRpc(DISCORD_APPLICATION_ID);
 	private final VanishDetector vanish = new VanishDetector();
 	private final long gameStart = System.currentTimeMillis() / 1000L;
 	private @Nullable Object session;
@@ -93,11 +100,7 @@ public final class PresenceManager {
 		boolean hidden = this.place == Place.LISTED_SERVER && this.vanish.hidden();
 		this.notifyVanish(minecraft, config, hidden);
 
-		String clientId = config.clientId;
-		if (this.place == Place.LISTED_SERVER && this.profile != null && !this.profile.clientId.isBlank()) {
-			clientId = this.profile.clientId;
-		}
-		this.rpc.update(clientId, config.enabled ? this.activity(minecraft, config, hidden) : null);
+		this.rpc.update(config.enabled ? this.activity(minecraft, config, hidden) : null);
 	}
 
 	/**
@@ -141,6 +144,17 @@ public final class PresenceManager {
 		} else {
 			this.sessionHost = ServerProfile.normalizeHost(server.ip);
 			this.profile = find(this.sessionHost);
+			if (this.profile == null && PresenceConfig.get().autoAdd && !known(this.sessionHost)) {
+				this.profile = autoProfile(server);
+				if (this.profile != null) {
+					PresenceConfig.get().servers.add(this.profile);
+					PresenceConfig.save();
+					if (minecraft.player != null) {
+						minecraft.gui.hud.getChat().addClientSystemMessage(
+							Component.translatable("serverpresence.notify.added", this.profile.name).withColor(0xFF9AA4B8));
+					}
+				}
+			}
 			this.place = this.profile != null ? Place.LISTED_SERVER : Place.OTHER_SERVER;
 		}
 		this.vanish.reset(this.profile);
@@ -149,6 +163,54 @@ public final class PresenceManager {
 	private static boolean inMenus(Minecraft minecraft) {
 		Screen screen = minecraft.gui.screen();
 		return screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen || screen instanceof DisconnectedScreen;
+	}
+
+	/** In the list, even disabled: a disabled server is not added again. */
+	private static boolean known(String host) {
+		for (ServerProfile server : PresenceConfig.get().servers) {
+			if (server.matches(host)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Profile of a server joined for the first time: its name in the multiplayer list (or its address after a direct
+	 * connection) and its address. {@code null} for LAN worlds, Realms and local or private addresses.
+	 */
+	public static @Nullable ServerProfile autoProfile(ServerData server) {
+		String host = ServerProfile.normalizeHost(server.ip);
+		if (server.isLan() || server.isRealm() || host.isEmpty() || isPrivate(host)) {
+			return null;
+		}
+		String ip = server.ip.strip().toLowerCase(Locale.ROOT);
+		if (ip.endsWith(":25565")) {
+			ip = ip.substring(0, ip.length() - ":25565".length());
+		}
+		String name = server.name == null ? "" : server.name.strip();
+		if (name.isEmpty() || name.equals(I18n.get("selectServer.defaultName")) || name.equals("Minecraft Server") || name.equals("Serveur Minecraft")) {
+			name = ip;
+		}
+		return new ServerProfile(name, ip, "");
+	}
+
+	private static boolean isPrivate(String host) {
+		if (host.equals("localhost") || host.endsWith(".localhost") || host.endsWith(".local") || host.endsWith(".lan")) {
+			return true;
+		}
+		if (host.contains(":")) {
+			// IPv6 literal: loopback, link-local, unique local
+			return host.equals("::1") || host.startsWith("fe80") || host.startsWith("fc") || host.startsWith("fd");
+		}
+		String[] parts = host.split("\\.");
+		if (parts.length != 4 || !host.matches("[0-9.]+")) {
+			return false;
+		}
+		int a = Integer.parseInt(parts[0]);
+		int b = Integer.parseInt(parts[1]);
+		return a == 127 || a == 10 || a == 0 || (a == 192 && b == 168) || (a == 172 && b >= 16 && b <= 31) || (a == 169 && b == 254)
+			|| (a == 100 && b >= 64 && b <= 127);
 	}
 
 	private static @Nullable ServerProfile find(String host) {
