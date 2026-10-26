@@ -10,7 +10,7 @@
 	"contact": {
 		"sources": "https://github.com/draft-yt-gaming/ServerPresence"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/serverpresence/icon.png",
 	"environment": "client",
 	"entrypoints": {

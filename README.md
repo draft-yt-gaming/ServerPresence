@@ -56,3 +56,7 @@ Le mod passe par sa propre application Discord, « Minecraft », dont l'icône e
 Gradle a besoin de Java 25. `./gradlew runClientGameTest` lance un vrai client et vérifie les écrans, la détection du vanish et l'envoi de la présence au Discord ouvert sur la machine.
 
 Le logo (`logo/`, 400×400 pour CurseForge) est dessiné par `logo/logo.py` : `python logo/logo.py logo`.
+
+## Licence
+
+MIT, voir [LICENSE](LICENSE).
