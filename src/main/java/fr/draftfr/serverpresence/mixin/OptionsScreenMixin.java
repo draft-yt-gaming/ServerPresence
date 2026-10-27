@@ -27,7 +27,7 @@ public abstract class OptionsScreenMixin {
 		if (contents instanceof GridLayout grid) {
 			Screen options = (Screen) (Object) this;
 			grid.addChild(Button.builder(Component.translatable("serverpresence.options.button"),
-					button -> Minecraft.getInstance().gui.setScreen(new SettingsScreen(options)))
+					button -> Minecraft.getInstance().setScreen(new SettingsScreen(options)))
 				.width(308).build(), ROW, 0, 1, 2);
 		}
 		return contents;

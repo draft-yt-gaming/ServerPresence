@@ -26,7 +26,7 @@ final class ServerGroupsCompat {
 				Class<?> group = Class.forName("fr.draftfr.servergroups.GroupStore$Group");
 				Object survie = store.getMethod("create", String.class).invoke(null, "Survie");
 				Method assign = store.getMethod("assign", ServerData.class, group);
-				JoinMultiplayerScreen screen = (JoinMultiplayerScreen) minecraft.gui.screen();
+				JoinMultiplayerScreen screen = (JoinMultiplayerScreen) minecraft.screen;
 				ServerList servers = screen.getServers();
 				assign.invoke(null, servers.get(0), survie);
 				assign.invoke(null, servers.get(1), survie);

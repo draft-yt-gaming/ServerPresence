@@ -91,7 +91,7 @@ public class ServerEditScreen extends OptionsSubScreen {
 		LinearLayout footer = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
 		Button delete = footer.addChild(Button.builder(Component.translatable("serverpresence.edit.delete"), button -> this.confirmDelete()).width(98).build());
 		delete.active = this.index >= 0;
-		footer.addChild(Button.builder(CommonComponents.GUI_CANCEL, button -> this.minecraft.gui.setScreen(this.parent)).width(98).build());
+		footer.addChild(Button.builder(CommonComponents.GUI_CANCEL, button -> this.minecraft.setScreen(this.parent)).width(98).build());
 		this.doneButton = footer.addChild(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(98).build());
 		this.validate();
 	}
@@ -102,7 +102,7 @@ public class ServerEditScreen extends OptionsSubScreen {
 		if (this.isValid()) {
 			this.parent.saveServer(this.server, this.index);
 		}
-		this.minecraft.gui.setScreen(this.parent);
+		this.minecraft.setScreen(this.parent);
 	}
 
 	private boolean isValid() {
@@ -160,13 +160,13 @@ public class ServerEditScreen extends OptionsSubScreen {
 	}
 
 	private void confirmDelete() {
-		this.minecraft.gui.setScreen(new ConfirmScreen(
+		this.minecraft.setScreen(new ConfirmScreen(
 			confirmed -> {
 				if (confirmed) {
 					this.parent.deleteServer(this.index);
-					this.minecraft.gui.setScreen(this.parent);
+					this.minecraft.setScreen(this.parent);
 				} else {
-					this.minecraft.gui.setScreen(this);
+					this.minecraft.setScreen(this);
 				}
 			},
 			Component.translatable("serverpresence.edit.delete.title", this.server.name),

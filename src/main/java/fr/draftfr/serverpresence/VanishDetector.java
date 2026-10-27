@@ -141,10 +141,10 @@ public final class VanishDetector {
 				texts.add(plain(name));
 			}
 		}
-		PlayerTabOverlayAccessor tab = (PlayerTabOverlayAccessor) minecraft.gui.hud.getTabList();
+		PlayerTabOverlayAccessor tab = (PlayerTabOverlayAccessor) minecraft.gui.getTabList();
 		addLines(texts, tab.serverpresence$header());
 		addLines(texts, tab.serverpresence$footer());
-		for (LerpingBossEvent bossBar : ((BossHealthOverlayAccessor) minecraft.gui.hud.getBossOverlay()).serverpresence$events().values()) {
+		for (LerpingBossEvent bossBar : ((BossHealthOverlayAccessor) minecraft.gui.getBossOverlay()).serverpresence$events().values()) {
 			texts.add(plain(bossBar.getName()));
 		}
 		if (!this.actionBar.isEmpty() && System.currentTimeMillis() - this.actionBarAt < ACTION_BAR_MS) {

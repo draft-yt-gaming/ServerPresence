@@ -7,11 +7,11 @@ import fr.draftfr.serverpresence.config.ServerProfile;
 import fr.draftfr.serverpresence.gui.SettingsScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -34,9 +34,9 @@ public class ServerPresenceClient implements ClientModInitializer {
 		manager = new PresenceManager();
 
 		KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(MOD_ID, "main"));
-		KeyMapping settingsKey = KeyMappingHelper.registerKeyMapping(
+		KeyMapping settingsKey = KeyBindingHelper.registerKeyBinding(
 			new KeyMapping("key.serverpresence.settings", InputConstants.KEY_F7, category));
-		KeyMapping discreetKey = KeyMappingHelper.registerKeyMapping(
+		KeyMapping discreetKey = KeyBindingHelper.registerKeyBinding(
 			new KeyMapping("key.serverpresence.discreet", InputConstants.UNKNOWN.getValue(), category));
 
 		ClientReceiveMessageEvents.GAME.register((message, overlay) -> manager.onGameMessage(message, overlay));
@@ -49,7 +49,7 @@ public class ServerPresenceClient implements ClientModInitializer {
 			}
 			if (openSettings) {
 				openSettings = false;
-				minecraft.gui.setScreen(new SettingsScreen(minecraft.gui.screen()));
+				minecraft.setScreen(new SettingsScreen(minecraft.screen));
 			}
 			if (++this.ticks % 10 == 0 && !paused) {
 				manager.tick(minecraft);
@@ -58,17 +58,17 @@ public class ServerPresenceClient implements ClientModInitializer {
 		ClientLifecycleEvents.CLIENT_STOPPING.register(minecraft -> manager.rpc().shutdown());
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
-			ClientCommands.literal("presence")
+			ClientCommandManager.literal("presence")
 				.executes(context -> {
 					// the chat screen closes after the command: open the settings on the next tick
 					openSettings = true;
 					return 1;
 				})
-				.then(ClientCommands.literal("discret").executes(context -> {
+				.then(ClientCommandManager.literal("discret").executes(context -> {
 					toggleDiscreet(context.getSource().getClient());
 					return 1;
 				}))
-				.then(ClientCommands.literal("statut").executes(context -> {
+				.then(ClientCommandManager.literal("statut").executes(context -> {
 					status(context.getSource());
 					return 1;
 				}))
@@ -88,7 +88,7 @@ public class ServerPresenceClient implements ClientModInitializer {
 	private static void toggleDiscreet(Minecraft minecraft) {
 		boolean discreet = manager.vanish().toggleManual();
 		if (minecraft.player != null) {
-			minecraft.gui.hud.getChat().addClientSystemMessage(
+			minecraft.gui.getChat().addMessage(
 				Component.translatable(discreet ? "serverpresence.discreet.on" : "serverpresence.discreet.off").withColor(GRAY));
 		}
 		manager.tick(minecraft);

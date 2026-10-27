@@ -144,7 +144,7 @@ public class ServerPresenceClientGameTest implements FabricClientGameTest {
 		context.waitForScreen(TitleScreen.class);
 
 		// settings screens, from the options of the title screen
-		context.setScreen(() -> new OptionsScreen(new TitleScreen(), context.computeOnClient(minecraft -> minecraft.options)));
+		context.setScreen(() -> new OptionsScreen(new TitleScreen(), net.minecraft.client.Minecraft.getInstance().options));
 		context.waitForScreen(OptionsScreen.class);
 		context.waitTicks(5);
 		context.takeScreenshot("serverpresence-0-options");
@@ -152,8 +152,8 @@ public class ServerPresenceClientGameTest implements FabricClientGameTest {
 		context.waitForScreen(SettingsScreen.class);
 		context.waitTicks(5);
 		context.takeScreenshot("serverpresence-1-settings");
-		context.runOnClient(minecraft -> minecraft.gui.setScreen(
-			new ServerEditScreen((SettingsScreen) minecraft.gui.screen(), PresenceConfig.get().servers.get(0).copy(), 0)));
+		context.runOnClient(minecraft -> minecraft.setScreen(
+			new ServerEditScreen((SettingsScreen) minecraft.screen, PresenceConfig.get().servers.get(0).copy(), 0)));
 		context.waitForScreen(ServerEditScreen.class);
 		context.waitTicks(5);
 		context.takeScreenshot("serverpresence-2-edit");
@@ -166,7 +166,7 @@ public class ServerPresenceClientGameTest implements FabricClientGameTest {
 
 		// singleplayer: the presence follows the game
 		try (TestSingleplayerContext singleplayer = context.worldBuilder().create()) {
-			singleplayer.getConnection().waitForChunksRender();
+			singleplayer.getClientWorld().waitForChunksRender();
 			context.waitTicks(20);
 			PresenceManager.Place place = context.computeOnClient(minecraft -> ServerPresenceClient.manager().place());
 			check(place == PresenceManager.Place.SINGLEPLAYER, "singleplayer detected, got " + place);
@@ -181,7 +181,7 @@ public class ServerPresenceClientGameTest implements FabricClientGameTest {
 	/** Clicks the middle of the Discord switch of a server row, as the mouse would. */
 	private static void clickSwitch(ClientGameTestContext context, String name) {
 		context.runOnClient(minecraft -> {
-			JoinMultiplayerScreen screen = (JoinMultiplayerScreen) minecraft.gui.screen();
+			JoinMultiplayerScreen screen = (JoinMultiplayerScreen) minecraft.screen;
 			for (GuiEventListener child : screen.children()) {
 				if (child instanceof ServerSelectionList list) {
 					for (ServerSelectionList.Entry entry : list.children()) {

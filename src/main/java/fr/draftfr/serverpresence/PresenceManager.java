@@ -150,7 +150,7 @@ public final class PresenceManager {
 					PresenceConfig.get().servers.add(this.profile);
 					PresenceConfig.save();
 					if (minecraft.player != null) {
-						minecraft.gui.hud.getChat().addClientSystemMessage(
+						minecraft.gui.getChat().addMessage(
 							Component.translatable("serverpresence.notify.added", this.profile.name).withColor(0xFF9AA4B8));
 					}
 				}
@@ -161,7 +161,7 @@ public final class PresenceManager {
 	}
 
 	private static boolean inMenus(Minecraft minecraft) {
-		Screen screen = minecraft.gui.screen();
+		Screen screen = minecraft.screen;
 		return screen instanceof TitleScreen || screen instanceof JoinMultiplayerScreen || screen instanceof DisconnectedScreen;
 	}
 
@@ -229,7 +229,7 @@ public final class PresenceManager {
 			return;
 		}
 		if ((this.lastHiddenKnown ? hidden != this.lastHidden : hidden) && config.enabled && config.notifyVanish && minecraft.player != null) {
-			minecraft.gui.hud.getChat().addClientSystemMessage(Component.translatable(
+			minecraft.gui.getChat().addMessage(Component.translatable(
 				hidden ? "serverpresence.notify.hidden" : "serverpresence.notify.shown",
 				this.profile == null ? "" : this.profile.name
 			).withColor(0xFF9AA4B8));

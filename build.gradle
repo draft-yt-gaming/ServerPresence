@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 }
 
 base {
@@ -11,10 +11,11 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	// other mods to check the compatibility with (not committed), e.g. Server Groups
-	localRuntime fileTree(dir: "run-mods", include: "*.jar")
+	modLocalRuntime fileTree(dir: "run-mods", include: "*.jar")
 }
 
 fabricApi {
@@ -37,15 +38,15 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = 21
 	it.options.encoding = "UTF-8"
 }
 
 java {
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
@@ -54,5 +55,16 @@ jar {
 
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
+	}
+}
+
+// the multiplayer screen of the test pings servers, which the network synchronizer of the 1.21.11 test API rejects
+loom {
+	runs {
+		configureEach {
+			if (name == "clientGameTest") {
+				vmArg "-Dfabric.client.gametest.disableNetworkSynchronizer=true"
+			}
+		}
 	}
 }

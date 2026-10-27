@@ -60,7 +60,7 @@ public class SettingsScreen extends OptionsSubScreen {
 
 		this.list.addHeader(Component.translatable("serverpresence.settings.discord"));
 		this.status = new StringWidget(310, 20, discordStatus(), this.font);
-		this.list.addBig(this.status);
+		this.list.addSmall(this.status, null);
 
 		this.list.addHeader(Component.translatable("serverpresence.settings.servers"));
 		for (int i = 0; i < config.servers.size(); i++) {
@@ -70,11 +70,11 @@ public class SettingsScreen extends OptionsSubScreen {
 				.withTooltip(value -> Tooltip.create(Component.literal(String.join(", ", server.addressPatterns())).withColor(GRAY)))
 				.create(Component.literal(server.name.isBlank() ? "?" : server.name), (button, value) -> server.enabled = value);
 			Button edit = Button.builder(Component.translatable("serverpresence.settings.edit"),
-				button -> this.minecraft.gui.setScreen(new ServerEditScreen(this, server.copy(), index))).width(150).build();
+				button -> this.minecraft.setScreen(new ServerEditScreen(this, server.copy(), index))).width(150).build();
 			this.list.addSmall(enabled, edit);
 		}
-		this.list.addBig(Button.builder(Component.translatable("serverpresence.settings.add"),
-			button -> this.minecraft.gui.setScreen(new ServerEditScreen(this, new ServerProfile(), -1))).build());
+		this.list.addSmall(Button.builder(Component.translatable("serverpresence.settings.add"),
+			button -> this.minecraft.setScreen(new ServerEditScreen(this, new ServerProfile(), -1))).width(310).build(), null);
 
 		this.list.addHeader(Component.translatable("serverpresence.settings.texts"));
 		this.list.addSmall(label("serverpresence.settings.generic_name"), this.box(config.genericName, 128, null, value -> config.genericName = value));

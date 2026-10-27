@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import fr.draftfr.serverpresence.gui.ServerListToggle;
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.multiplayer.ServerSelectionList;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -54,7 +54,7 @@ public abstract class OnlineServerEntryMixin extends ServerSelectionList.Entry {
 
 	/** The motd wraps before the switch instead of running under it. */
 	@ModifyArg(
-		method = "extractContent",
+		method = "renderContent",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;split(Lnet/minecraft/network/chat/FormattedText;I)Ljava/util/List;"),
 		index = 1
 	)
@@ -62,8 +62,8 @@ public abstract class OnlineServerEntryMixin extends ServerSelectionList.Entry {
 		return ServerListToggle.state(this.serverData) == null ? width : width - ServerListToggle.WIDTH - 5;
 	}
 
-	@Inject(method = "extractContent", at = @At("TAIL"))
-	private void serverpresence$drawSwitch(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a, CallbackInfo ci) {
+	@Inject(method = "renderContent", at = @At("TAIL"))
+	private void serverpresence$drawSwitch(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float a, CallbackInfo ci) {
 		Boolean on = ServerListToggle.state(this.serverData);
 		if (on == null) {
 			return;
