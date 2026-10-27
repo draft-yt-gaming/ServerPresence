@@ -4,7 +4,7 @@
 
 Mod Fabric (client) pour Minecraft 1.21.11 (branche `mc/1.21.11` ; la version 26.3 est sur `main`) qui affiche le serveur sur lequel tu joues dans ta présence Discord : nom (« Joue à PlatoMINE »), IP, logo du serveur, tête de ton skin, chrono et un bouton vers le site. Il se masque tout seul quand tu es en vanish.
 
-Prérequis : Fabric Loader 0.19.5+, Fabric API, Java 21, l'application Discord de bureau ouverte.
+Prérequis : Fabric Loader 0.17.3+, Fabric API, Java 21, l'application Discord de bureau ouverte.
 
 ## Serveurs préconfigurés
 
